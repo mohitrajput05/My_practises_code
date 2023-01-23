@@ -1,0 +1,161 @@
+MySQL/RDBMS :-
+1. SQL Based Database
+2. Table / Structure
+Database-->Table--->Records/Row      
+MongoDB:-
+1. NoSQL Database
+2. Collection   
+Database-->Collection-->Documents
+MongoDB store the data in the form
+BSON (Binary JSON)
+------------------------------------
+show dbs
+use productdb;
+ db ---> productdb
+ db.createCollection('product')
+ db.employee.insert({
+   name: 'leesha',
+   age: 30,
+   skill : 'java',
+   salary: 97000
+ })
+ db.employee.insert([
+   {
+    name: 'sahil',
+    age: 25,
+    skill: 'angular',
+    salary: 85000   
+   },
+   {
+    name: 'cheeku',
+    age: 29,
+    skill: 'react',
+    salary: 60000   
+   },
+   {
+    name: 'peeku',
+    age: 30,
+    skill: 'java',
+    salary: 76000   
+   },
+   {
+    name: 'atul',
+    age: 27,
+    skill: 'javascript',
+    salary: 90000   
+   },
+   {
+    name: 'ankita',
+    age: 22,
+    skill: 'javascript',
+    salary: 71000   
+   }
+ ]);
+-------------------------------
+// select * from employee
+db.employee.find();
+// select * from employee where skill='java'
+db.employee.find({skill: 'java'})
+
+db.employee.find({},{name:1,age:1,skill:1,_id:0});
+// select * from employee where 
+   age >=25 and salary >=75000
+----------------------------------
+ $gt,$lt,$gte,$lte,$eq,$ne
+
+ db.employee.find({
+   age: {$gt: 25},salary: {$gt:75000}
+ })
+ 
+ db.employee.find({
+   $and:[
+   {salary:{$gt:75000}},
+   {salary:{$lt:90000}}
+   ]
+ })
+db.employee.find({
+   $or:[
+    {salary:{$gte:75000}},
+    {skill: 'java'} 
+   ]
+},{_id:0})
+
+db.employee.find().sort({age: 1})
+
+db.employee.find().sort({age:-1})
+.limit(2)
+
+db.employee.find().sort({age:-1})[0].age --> 30
+
+db.employee.find({
+  age: db.employee.find().sort({age:-1})[0].age
+})
+db.employee.find({
+  age: {
+    $ne: db.employee.find().sort({age:-1})[0].age 
+  }
+}).sort({age: -1})[0]
+
+
+db.employee.find({
+  age: db.employee.find({
+         age: {
+                 $ne: db.employee.find().sort({age:-1})[0].age 
+         }
+  }).sort({age: -1})[0].age
+})
+------------------------------------
+db.category.insert([
+  {
+    categoryName: 'Electronics',
+    catId: 1
+  },
+  {
+    categoryName: 'Cosmatics',
+    catId: 2
+  },
+  {
+    categoryName: 'Garments',
+    catId: 3
+  },
+  {
+    categoryName: 'Other',
+    catId: 4
+  }
+]);
+db.product.insert([
+  {
+    name: 'Laptop',
+    price: 70000,
+    categoryId: 1
+  },
+  {
+    name: 'Vasline',
+    price: 80,
+    categoryId: 2
+  },
+  {
+    name: "Men's Jeans",
+    price: 4000,
+    categoryId: 3
+  },
+  {
+    name: 'Chair',
+    price: 2000,
+    categoryId: 4
+  }
+])   
+db.product.aggregate([
+  {
+    $lookup:{
+      from: 'category',
+      localField: 'categoryId',
+      foreignField: 'catId',
+      as: 'categoryDetails'
+    }
+  },{
+      $match: {price:{$gt:5000}}
+    }
+])
+
+

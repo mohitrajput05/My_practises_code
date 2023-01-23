@@ -1,0 +1,20 @@
+
+<div class="container">
+  <div class="row  space-between-around mt-3">
+    <div class="card col-md-3 mt-3 p-3" *ngFor="let product of productList; index as i" [class.offset-1]="i%3!=0" [class.manage-left-margin]="i%3==0">
+      <img class="card-img-top" style="height: 100px;" src="{{product.productImageUrl}}" alt="Card image">
+      <div class="card-body">
+        <h6 class="card-title text-center">{{product.productName}} <b style="color: green;">{{product.productPrice}} Rs.</b></h6>
+        <h6 class="text-center text-primary">View more deatils</h6>
+        <div class="row">
+           <div class="col-md-6 mt-1">
+             <button class="btn btn-danger" style="width:100%;">Delete</button>
+           </div>
+           <div class="col-md-6 mt-1">
+            <button class="btn btn-warning" style="width:100%;">Edit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>

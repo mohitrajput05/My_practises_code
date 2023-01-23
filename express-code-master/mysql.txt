@@ -1,0 +1,222 @@
+
+
+ create database userdb;
+
+ create table user(
+   id int primary key auto_increment,
+   name varchar(100) not null,
+   mobile varchar(11) unique key,
+   age int(3)
+ )
+
+ insert into user(name,mobile,age) values('rahil','9009111222',21); 
+ insert into user(name,mobile,age)
+ values('sahil','1111111',29),
+ ('rahil','9009111222',21),
+ ('cheeku','222222',28),
+ ('peeku','333333',25),
+ ('ishu','3333332',22),
+ ('dishu','4444444',27),
+ ('leesha','5555555',30),
+ ('neesha','77777',29),
+ ('atul','888888',30),
+ ('ankita','999999',28)
+---------------------------------------------------------------------------------------
+
+  Filtering data
+    
+    select id,name,age from user where age >=25
+    
+    select id,name,age from user where age >=22 and age <=29
+    select id,name,age from user where age between 22 and 29
+
+    select id,name,age from user where age = 25 or age=28 or age=29
+    select id,name,age from user where age in(25,28,29)    
+    
+    select id,name,age from user where age is null
+    select id,name,age from user where age is not null
+
+  wild card  ( %, _ )  
+  -------------------------------
+    select id,name,age from user where name like 'a%'
+    select id,name,age from user where name like '%a'
+    
+    2nd last letter must be 'h'
+    select id,name,age from user where name like '%h_'
+    select id,name,age from user where name like '%ee%';
+    select id,name,age from user where name like 'B% P% S%';
+    
+    2nd letter -> e and 3rd last s 
+    select id,name,age from user where name like '_e%s__'
+  ------------------------------------------------------------------------
+    order by
+    select id,name,age from user order by name
+    
+    select the top 5 user whose age is highest 
+
+    select id,name,age from user order by age desc limit 5
+   ----------------------------------------------------------------------------
+   max(), min(), sum(), avg(), count()
+   
+   select max(age) from user; =====> 30
+   
+   select id,name,age from user 
+     where age = (select max(age) from user);
+     
+   select id,name,age from user
+     where age = (select max(age) from user 
+                     where age != ( select max(age) from user)) 
+                     
+   select id,name,age from user
+     where age >= (select avg(age) from user) or age = 25                     
+   ---------------------------------------------------------------------------------
+   create table country(
+     id int primary key auto_increment,
+     country_name varchar(100));
+     
+   create table state(
+     id int primary key auto_increment,
+     state_name varchar(100),
+     country_id int,
+     foreign key(country_id) references country(id))
+     
+   create table city(
+     id int primary key auto_increment,
+     city_name varchar(100),
+     state_id int,
+     foreign key(state_id) references state(id))     
+   
+   alter table user add( city_id int,
+   foreign key(city_id) references city(id))
+   alter table user drop city_id;
+   
+   insert into country(country_name)
+   values('India'),('Usa');
+   
+   insert into state(state_name,country_id)
+   values('MP',1),('MH',1),('UP',1),('GJ',1),('CA',2)
+   
+   insert into city(city_name,state_id)
+   values('Indore',1),('Jabalpur',1),('Ratlam',1),('Mumbai',2),('Pune',2)
+   ,('Lucknow',3),('Agra',3),('Vadodra',4),('Ahamdabad',4),('Washington DC',5)
+   ------------------------------------------------------------------------------------------
+    inner join
+    
+    select user.id,user.name,user.age,city.city_name
+    from user inner join city on user.city_id = city.id
+    
+    
+    select user.id,user.name,city.city_name,state.state_name,country.country_name
+    from user inner join city on user.city_id = city.id
+    inner join state on city.state_id = state.id
+    inner join country on state.country_id = country.id 
+   
+   select user.id,user.name,user.age,city.city_name
+   from user inner join city on user.city_id = city.id
+   where user.age >=(select avg(user.age) from user);
+   
+   select user.id,user.name,user.age,city.city_name
+   from user left outer join city on user.city_id = city.id;
+   
+   select user.id,user.name,user.age,city.city_name
+   from user right outer join city on user.city_id = city.id;
+   
+   
+   select * from user,city;
+   
+   create view user_details as select user.id,user.name,city.city_name,state.state_name,country.country_name
+    from user inner join city on user.city_id = city.id
+    inner join state on city.state_id = state.id
+    inner join country on state.country_id = country.id 
+   
+   select count(*),city_id from user group by city_id
+   
+   select count(*) as Total,city.city_name as City from user inner join city
+   on user.city_id = city.id group by user.city_id
+  
+  ------------------
+  where
+  select id,name,age from user where age >= 25
+  select id,name,age from user where age>=23 and age<=28
+  select id,name,age from user where age between 23 and 28
+  select id,name,age from user where age=25 or age=27
+  select id,name,age from user where age in(25,27,29)
+  
+  --------------------------------------------------------
+  % (zero or any number of occurange),  _(denoting fixed position)
+  
+  select id,name,age from user where name like 'a%'
+  select id,name,age from user where name like '%a%'  
+  select id,name,age from user where name like '%L'
+  select id,name,age from user where name like '%i_'
+  select id,name,age from user where name like '_a%h__'
+  select id,name,age from user where name like 's% s%';
+  SELECT name FROM user WHERE name REGEXP 'il$'
+  -------------------------------------------------------------------------------
+  avg(),count(),max(), min(), sum()
+  
+  select count(*) from user;
+  select count(mobile) from user; // 11 ,9
+  select max(age) from user; 
+   select id,name,age from user where age=max(age)
+   select id,name,age from user where age = (
+   select max(age) from user)
+   
+   select *id,name,age from user where age = (
+      select max(age) from user where age!=(
+        select max(age) from user));
+   select avg(age) from user;
+   ---------------------------------------------------------------
+   order by (asc,desc)
+   select id,name,age from user order by age;
+   select id,name,age from user order by age desc;
+   select id,name,age from user order by age desc  limit 5,3;
+   select id,name,age from user order by age asc limit 5;
+   
+   group by
+   select count(*),age from user group by age   
+     -------------------------------------------------------------
+     create table country(
+     id int primary key auto_increment
+     ,country_name varchar(100));
+     
+     create table state(
+       id int primary key auto_increment,
+       state_name varchar(100),
+       country_id int,
+       foreign key(country_id) references country(id))
+     
+     create table city(
+       id int primary key auto_increment,
+       city_name varchar(100),
+       state_id int,
+       foreign key(state_id) references state(id));
+     
+     alter table user add(
+       city_id int,
+       foreign key(city_id) references city(id) on delete cascade);
+   
+     insert into country(country_name)
+     values('India','Russia')
+
+     insert into state(state_name,country_id)
+     values('MP',1),('UP',1),('MH',1),('GJ',1),
+     ('CA',2)
+
+     insert into city(city_name,state_id)
+     values('Indore',1),('Jabalpur',1),
+     ('Lucknow',2),('Gazibad',2),('Ahamdabad',4),
+     ('Vadodra',4),('Gandhinagar',4),('Surat',4),
+     ('Mumbai',3),('Pune',3),('Nasik',3),('Bla Bla',5)
+------------------------------------------------------------------------
+ update user set city_id=1 where id in(1,2,3);
+
+ Joins :-  To fetch the data from multiple tables;
+   1. Inner Join   :- Get matching record from both the tables
+   2. Left outer Join :- Get all data of left table + matching record of another table
+   3. Right outer join :- Get all data of right table + matching record of another table
+   4. Self Join :- Applicable on same table used to compare records of same table.
+   5. Cross Join / Cartision product :- Get all possible combinition of records of both the tables.
+
+
+   
